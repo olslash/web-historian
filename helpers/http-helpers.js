@@ -43,19 +43,25 @@ exports.getResponse = function(req, res) {
     // serveAssets(res, archive.paths.siteAssets + '/' + 'styles.css');
   }
   else {
-    // console.log(archive.isUrlInList(path));
-    if(archive.isUrlInList(path, function(){
-
-    }))
-  //   if (archive.isUrlArchived(path)) {
-  //     serveAssets(res, archive.paths.archivedSites + path);
-  //   } else {
-  //     if (!archive.isUrlInList(path)) {
-  //       console.log('We did not find the path so we will add it');
-  //       archive.addUrlToList(path);
-  //     }
-  //     serveAssets(res, archive.paths.siteAssets + '/' + 'loading.html');
-  //   }
+    // not on root path
+    archive.isUrlArchived(path, function(){
+      console.log('found');
+      // found cache of this URL; serve it
+    }, function (){
+      console.log('Cache of this URL not found');
+      // didn't find the cache
+      // is the url in the list to be scraped?
+      archive.isUrlInList(path, function(){
+        // success-- URL is already in the list
+        console.log('URL is already in the list');
+        // todo: redirect to loading
+      }, function(){
+        console.log('Trying to add the URL to the list')
+        // fail-- URL is not in the list. Add it.
+        archive.addUrlToList(path);
+        // todo: redirect to loading
+      });
+    });
   }
 };
 
