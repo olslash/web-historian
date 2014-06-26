@@ -1,3 +1,6 @@
+var through = require('through');
+var split = require('split');
+var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
@@ -28,14 +31,36 @@ exports.initialize = function(pathsObj){
 exports.readListOfUrls = function(){
 };
 
-exports.isUrlInList = function(){
+exports.isUrlInList = function(path, cb){
+  //readListofUrls
+  //is it in there
+  path = path.substring(1);
+
+  var file = fs.createReadStream('archives/sites.txt');
+  file.pipe(split()).pipe(through(function(line){
+
+    if(line === path) { cb(); }
+  }));
+
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(path){
+  fs.appendFile('/archives/sites.txt', path, function (err) {
+    if (err) throw err;
+    console.log(path + ' was appended to file!');
+  });
 };
 
-exports.isURLArchived = function(){
+exports.isUrlArchived = function(){
+  //if not isURLInList
+  // addURLtolist
+  // return true;
 };
 
 exports.downloadUrls = function(){
+  // if
+  var req = http.get('http://www.cnn.com', function(res) {
+    var stream = fs.createWriteStream('www.cnn.com');
+    res.pipe(stream);
+  });
 };
